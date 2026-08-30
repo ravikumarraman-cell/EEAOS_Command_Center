@@ -1,0 +1,7 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState } from "react";
+const programs = ["Platform Modernization", "AI Transformation", "Security Hardening"];
+export default function PortfolioManagement() {
+    const [program, setProgram] = useState(programs[0]);
+    return _jsxs("div", { style: { padding: 24 }, children: [_jsx("h1", { children: "Portfolio Management Suite" }), _jsxs("div", { style: { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }, children: [_jsx("div", { children: "Programs: 3" }), _jsx("div", { children: "Epics: 18" }), _jsx("div", { children: "Features: 74" }), _jsx("div", { children: "Roadmap Health: 91%" })] }), _jsx("h3", { children: "Program Tracking" }), _jsxs("label", { children: ["Program ", _jsx("select", { "aria-label": "Program", value: program, onChange: e => setProgram(e.target.value), children: programs.map(p => _jsx("option", { children: p }, p)) })] }), _jsxs("p", { children: ["Selected Program: ", program] }), _jsx("h3", { children: "Delivery Forecast" }), _jsxs("ul", { children: [_jsx("li", { children: "On Track: 12" }), _jsx("li", { children: "At Risk: 4" }), _jsx("li", { children: "Blocked: 2" })] }), _jsx("h3", { children: "Capacity Planning" }), _jsx("p", { children: "Teams Utilized: 82%" }), _jsx("h3", { children: "Dependency Overview" }), _jsx("pre", { children: "Program -> Epic -> Feature -> Story" }), _jsx("h3", { children: "Roadmap" }), _jsx("p", { children: "Q1 | Q2 | Q3 | Q4" })] });
+}

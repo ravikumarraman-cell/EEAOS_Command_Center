@@ -1,0 +1,5 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+export default function ProductionReadinessCenter() {
+    const checks = [['Monitoring', 'Ready'], ['Alerting', 'Ready'], ['Runbooks', 'Ready'], ['Rollback Plan', 'Ready'], ['Performance Validation', 'Pending'], ['Security Approval', 'Ready']];
+    return _jsxs("div", { style: { padding: 24 }, children: [_jsx("h2", { children: "Production Readiness Center" }), _jsxs("div", { style: { display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }, children: [_jsx("div", { children: "Readiness: 92%" }), _jsx("div", { children: "Risk: Low" }), _jsx("div", { children: "Release Window: Approved" }), _jsx("div", { children: "Go/No-Go: GO" })] }), _jsx("h3", { children: "Release Gates" }), _jsx("ul", { children: checks.map(c => _jsxs("li", { children: [c[0], ": ", c[1]] }, c[0])) }), _jsx("h3", { children: "Deployment Risk Assessment" }), _jsx("p", { children: "High:0 Medium:2 Low:8" }), _jsx("h3", { children: "SRE Workflow" }), _jsx("pre", { children: "Validation -> Approval -> Release -> Monitoring" })] });
+}
