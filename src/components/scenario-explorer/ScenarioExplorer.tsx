@@ -15,19 +15,22 @@ import {
   Clock,
   Layers,
   Wrench,
-  Sparkles
+  Sparkles,
+  Info
 } from "lucide-react";
 import { specDocuments, Specification } from "../../specs/specDocuments";
 import SpecDetailDrawer from "../specs/SpecDetailDrawer";
 
+interface Agent {
+  role: string;
+  description: string;
+  tools: string[];
+}
+
 interface Scenario {
   name: string;
   tiers: string;
-  agents: {
-    role: string;
-    description: string;
-    tools: string[];
-  }[];
+  agents: Agent[];
   specs: string[];
   outputs: string[];
   color: string;
@@ -235,216 +238,220 @@ export default function ScenarioExplorer() {
           Scenario Explorer
         </h1>
         <p className="text-zinc-500 text-sm mt-2 max-w-2xl leading-relaxed">
-          Select an engineering scenario to see the governing playbooks, assigned autonomous agents, and expected deliverables mapped out like an AI Agent Studio workspace.
+          The autonomous system playbook directory and execution workspace. Choose a scenario on the left to orchestrate compliance rules and AI agents.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* TWO COLUMN GENERAL LAYOUT - AI AGENT STUDIO STANDARDS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         
-        {/* Left Column: Minimalist Scenario Selector (AI Agent Studio Style) */}
-        <div className="lg:col-span-4 space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-zinc-400" />
-            <input
-              type="text"
-              placeholder="Search engineering scenarios..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 bg-white border border-zinc-200 rounded-xl text-sm placeholder-zinc-400 focus:outline-hidden focus:ring-2 focus:ring-[#d94625]/20 focus:border-[#d94625] transition-all"
-            />
+        {/* COLUMN 1: CONTROLS, DIRECTORY & INSTRUCTIONS (LEFT COLUMN) */}
+        <div className="space-y-6">
+          
+          {/* Section 1: Selector Box */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider font-mono">
+                System Scenarios Directory
+              </h3>
+              <span className="text-[10px] bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded font-mono font-bold">
+                {scenarios.length} Models
+              </span>
+            </div>
+
+            <div className="relative">
+              <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-zinc-400" />
+              <input
+                type="text"
+                placeholder="Search engineering scenarios..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl text-sm placeholder-zinc-400 focus:outline-hidden focus:ring-2 focus:ring-[#d94625]/20 focus:border-[#d94625] transition-all"
+              />
+            </div>
+
+            <div className="space-y-2.5 max-h-[290px] overflow-y-auto pr-1">
+              {filteredScenarios.map((s) => {
+                const isSelected = selected.name === s.name;
+                return (
+                  <button
+                    key={s.name}
+                    onClick={() => setSelected(s)}
+                    className={`w-full text-left p-3.5 rounded-xl border transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
+                      isSelected
+                        ? "bg-zinc-900 border-transparent text-white shadow-md shadow-zinc-900/10"
+                        : "bg-white border-zinc-200/80 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/50"
+                    }`}
+                  >
+                    {isSelected && (
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#d94625]" />
+                    )}
+                    
+                    <div className="pr-4 space-y-1">
+                      <strong className="block text-xs font-bold tracking-tight uppercase tracking-wider">{s.name}</strong>
+                      <span className={`inline-block text-[9px] px-2 py-0.5 rounded-sm border font-mono font-medium ${
+                        isSelected 
+                          ? "bg-zinc-800 text-zinc-300 border-zinc-700" 
+                          : "bg-zinc-100 text-zinc-500 border-zinc-200"
+                      }`}>
+                        {s.tiers}
+                      </span>
+                    </div>
+
+                    <ArrowRight 
+                      className={`w-4 h-4 shrink-0 transition-all duration-300 ${
+                        isSelected 
+                          ? "text-[#d94625] translate-x-0" 
+                          : "text-zinc-300 group-hover:text-zinc-500 group-hover:translate-x-1"
+                      }`} 
+                    />
+                  </button>
+                );
+              })}
+              
+              {filteredScenarios.length === 0 && (
+                <div className="p-8 text-center bg-white border border-dashed border-zinc-200 rounded-xl">
+                  <HelpCircle className="w-8 h-8 text-zinc-300 mx-auto mb-2" />
+                  <p className="text-zinc-500 text-xs font-semibold">No matching scenarios found.</p>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="space-y-2.5">
-            {filteredScenarios.map((s) => {
-              const isSelected = selected.name === s.name;
-              return (
-                <button
-                  key={s.name}
-                  onClick={() => setSelected(s)}
-                  className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
-                    isSelected
-                      ? "bg-zinc-900 border-transparent text-white shadow-md shadow-zinc-900/10"
-                      : "bg-white border-zinc-200/80 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/50"
-                  }`}
-                >
-                  {isSelected && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#d94625]" />
-                  )}
-                  
-                  <div className="pr-4 space-y-1">
-                    <strong className="block text-xs font-bold tracking-tight uppercase tracking-wider">{s.name}</strong>
-                    <span className={`inline-block text-[9px] px-2 py-0.5 rounded-sm border font-mono font-medium ${
-                      isSelected 
-                        ? "bg-zinc-800 text-zinc-300 border-zinc-700" 
-                        : "bg-zinc-100 text-zinc-500 border-zinc-200"
-                    }`}>
-                      {s.tiers}
-                    </span>
-                  </div>
-
-                  <ArrowRight 
-                    className={`w-4 h-4 shrink-0 transition-all duration-300 ${
-                      isSelected 
-                        ? "text-[#d94625] translate-x-0" 
-                        : "text-zinc-300 group-hover:text-zinc-500 group-hover:translate-x-1"
-                    }`} 
-                  />
-                </button>
-              );
-            })}
+          {/* Section 2: Governing Playbooks Panel */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
+              <FileText className="w-4 h-4 text-[#d94625]" />
+              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-800">
+                Governing Playbooks
+              </h4>
+            </div>
             
-            {filteredScenarios.length === 0 && (
-              <div className="p-8 text-center bg-white border border-dashed border-zinc-200 rounded-2xl">
-                <HelpCircle className="w-8 h-8 text-zinc-300 mx-auto mb-2" />
-                <p className="text-zinc-500 text-xs font-semibold">No matching scenarios found.</p>
-              </div>
-            )}
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              These compliance playbooks are bound to the currently selected scenario. Click on a standard below to audit its compliance criteria and review its checklists:
+            </p>
+
+            <div className="space-y-2.5">
+              {selected.specs.map((specName) => {
+                const specObj = specDocuments.find(
+                  (doc) => doc.title.toLowerCase() === specName.toLowerCase() ||
+                  doc.title.toLowerCase().includes(specName.toLowerCase()) ||
+                  specName.toLowerCase().includes(doc.title.toLowerCase())
+                );
+                
+                return (
+                  <button
+                    key={specName}
+                    type="button"
+                    onClick={() => openSpecByName(specName)}
+                    className="group w-full flex items-start gap-3.5 p-4 text-left border border-zinc-200/80 hover:border-[#d94625] rounded-xl hover:bg-zinc-50 bg-white transition-all shadow-2xs"
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-[#d94625]/5 text-[#d94625] flex items-center justify-center font-serif text-sm font-bold group-hover:bg-[#d94625] group-hover:text-white transition-all shrink-0">
+                      {specObj ? specObj.tier : "T1"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="block text-xs font-bold text-zinc-900 group-hover:text-[#d94625] transition-colors truncate">
+                        {specName}
+                      </span>
+                      <span className="block text-[10px] text-zinc-400 font-mono mt-0.5">
+                        {specObj ? specObj.id : "EEAOS-SPEC-XXX"} • Click to Audit
+                      </span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-[#d94625] group-hover:translate-x-1 transition-all self-center shrink-0" />
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
         </div>
 
-        {/* Right Column: AI Agent Studio Workspace View */}
-        <div className="lg:col-span-8 space-y-6">
+        {/* COLUMN 2: ACTIVE AGENT ROSTER & DELIVERABLES (RIGHT COLUMN) */}
+        <div className="space-y-6">
           
-          {/* Main Visual Profile */}
-          <div className="bg-white border border-zinc-200 rounded-2xl p-6 md:p-8 shadow-xs space-y-8">
-            
-            {/* Header Block */}
-            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-zinc-100 pb-5">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className={`inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-sm border ${getCriticalityBadge(selected.criticality)}`}>
-                    {selected.criticality} Priority
-                  </span>
-                  <span className="text-zinc-300">•</span>
-                  <span className="text-xs text-zinc-500 font-mono">SLA: {selected.slaHours} Hours</span>
-                </div>
-                <h2 className="font-serif text-2xl md:text-3xl font-normal text-zinc-950">
-                  {selected.name}
-                </h2>
-                <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed max-w-xl">
-                  {selected.desc}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200/60 rounded-xl px-4 py-2 text-xs text-zinc-500 font-mono self-start sm:self-auto shrink-0">
-                <span className="text-zinc-400">Tiers:</span>
-                <span className="font-bold text-zinc-800">{selected.tiers}</span>
-              </div>
+          {/* Header & Scenario Context Card */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 md:p-8 text-white shadow-lg space-y-4">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className={`inline-block text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-sm border ${getCriticalityBadge(selected.criticality)}`}>
+                {selected.criticality} Priority
+              </span>
+              <span className="text-zinc-600">•</span>
+              <span className="text-xs text-zinc-400 font-mono">SLA: {selected.slaHours} Hours</span>
             </div>
 
-            {/* Two-Column Workspace Layout (AI Agent Studio Style) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-zinc-100">
-              
-              {/* Column 1: AI Agent Roster */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-zinc-800 pb-1">
-                  <Cpu className="w-4 h-4 text-[#d94625]" />
-                  <h4 className="text-xs font-bold uppercase tracking-wider">
-                    Assigned Autonomous AI Agents
-                  </h4>
-                </div>
-                
-                <div className="space-y-4">
-                  {selected.agents.map((agent) => (
-                    <div key={agent.role} className="border border-zinc-200 bg-[#fcfcfc] rounded-xl p-4 flex flex-col justify-between space-y-4 hover:border-zinc-300 transition-colors">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg bg-zinc-900 text-white flex items-center justify-center">
-                            <User className="w-3.5 h-3.5" />
-                          </div>
-                          <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">{agent.role}</span>
-                        </div>
-                        <p className="text-[11px] text-zinc-500 leading-relaxed">
-                          {agent.description}
-                        </p>
-                      </div>
-
-                      <div className="space-y-1.5 pt-2.5 border-t border-zinc-100">
-                        <span className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Assigned Tools:</span>
-                        <div className="flex flex-wrap gap-1">
-                          {agent.tools.map((t) => (
-                            <span key={t} className="text-[9px] font-mono font-medium text-zinc-600 bg-zinc-100 px-1.5 py-0.5 rounded-sm">
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Column 2: Governing Playbooks & Mandated Deliverables */}
-              <div className="space-y-6">
-                
-                {/* Governing Playbooks */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-zinc-800">
-                    <FileText className="w-4 h-4 text-[#d94625]" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider">
-                      Governing Playbooks
-                    </h4>
-                  </div>
-                  <p className="text-xs text-zinc-400 leading-normal">
-                    Standards linked to this scenario. Click to open and audit:
-                  </p>
-                  
-                  <div className="space-y-2.5">
-                    {selected.specs.map((specName) => {
-                      const specObj = specDocuments.find(
-                        (doc) => doc.title.toLowerCase() === specName.toLowerCase() ||
-                        doc.title.toLowerCase().includes(specName.toLowerCase()) ||
-                        specName.toLowerCase().includes(doc.title.toLowerCase())
-                      );
-                      
-                      return (
-                        <button
-                          key={specName}
-                          type="button"
-                          onClick={() => openSpecByName(specName)}
-                          className="group w-full flex items-start gap-3 p-3.5 text-left border border-zinc-200/80 hover:border-[#d94625] rounded-xl hover:bg-zinc-50 bg-white transition-all"
-                        >
-                          <div className="w-7 h-7 rounded-lg bg-[#d94625]/5 text-[#d94625] flex items-center justify-center font-serif text-xs font-bold group-hover:bg-[#d94625] group-hover:text-white transition-all shrink-0">
-                            {specObj ? specObj.tier : "T1"}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <span className="block text-xs font-bold text-zinc-900 group-hover:text-[#d94625] transition-colors truncate">
-                              {specName}
-                            </span>
-                            <span className="block text-[9px] text-zinc-400 font-mono mt-0.5">
-                              {specObj ? specObj.id : "EEAOS-SPEC-XXX"}
-                            </span>
-                          </div>
-                          <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-[#d94625] group-hover:translate-x-1 transition-all self-center shrink-0" />
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Mandated Deliverables */}
-                <div className="space-y-3 pt-5 border-t border-zinc-100">
-                  <div className="flex items-center gap-2 text-zinc-800">
-                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                    <h4 className="text-xs font-bold uppercase tracking-wider">
-                      Mandated Deliverables
-                    </h4>
-                  </div>
-                  <div className="space-y-2">
-                    {selected.outputs.map((output) => (
-                      <div key={output} className="flex items-center gap-3 p-3.5 border border-emerald-100 bg-emerald-50/10 rounded-xl hover:border-emerald-200 transition-colors">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                        <span className="text-xs font-semibold text-zinc-800 leading-tight">{output}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
+            <div className="space-y-1">
+              <h2 className="font-serif text-2xl md:text-3xl font-normal text-white">
+                {selected.name}
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
+                {selected.desc}
+              </p>
             </div>
-
           </div>
+
+          {/* AI Agent Workspace Team */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+              <div className="flex items-center gap-2">
+                <Cpu className="w-4 h-4 text-[#d94625]" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-800">
+                  Assigned Autonomous AI Agents
+                </h4>
+              </div>
+              <span className="text-[10px] font-mono text-zinc-400">
+                Active Workers: {selected.agents.length}
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {selected.agents.map((agent) => (
+                <div key={agent.role} className="border border-zinc-200 bg-[#fcfcfc] rounded-xl p-4 flex flex-col justify-between space-y-3.5 hover:border-zinc-300 transition-colors">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-zinc-900 text-white flex items-center justify-center shadow-xs">
+                        <User className="w-4 h-4" />
+                      </div>
+                      <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">{agent.role}</span>
+                    </div>
+                    <p className="text-[11px] text-zinc-500 leading-relaxed">
+                      {agent.description}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5 pt-2.5 border-t border-zinc-100">
+                    <span className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Assigned Tools & Skillsets:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {agent.tools.map((t) => (
+                        <span key={t} className="text-[9px] font-mono font-medium text-zinc-600 bg-zinc-100 px-2 py-0.5 rounded-sm border border-zinc-200/40">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mandated Deliverables Block */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-800">
+                Mandated Deliverables & Outputs
+              </h4>
+            </div>
+
+            <div className="space-y-2.5">
+              {selected.outputs.map((output) => (
+                <div key={output} className="flex items-center gap-3 p-3.5 border border-emerald-100 bg-emerald-50/10 rounded-xl hover:border-emerald-200 transition-colors">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span className="text-xs font-semibold text-zinc-800 leading-tight">{output}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
 
       </div>
