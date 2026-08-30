@@ -16,6 +16,27 @@ import PortfolioManagement from "./components/portfolio-management/PortfolioMana
 import EngineeringIntelligence from "./components/engineering-intelligence/EngineeringIntelligence";
 import SpecDependencyGraph from "./components/spec-dependency-graph/SpecDependencyGraph";
 import ReleaseControlCenter from "./components/release-control/ReleaseControlCenter";
+import { 
+  LayoutDashboard, 
+  Globe, 
+  Compass, 
+  Layers, 
+  Sparkles, 
+  BookOpen, 
+  Cpu, 
+  Workflow, 
+  Activity, 
+  TrendingUp, 
+  PieChart, 
+  GitBranch, 
+  ShieldCheck, 
+  Lock, 
+  CheckCircle, 
+  Terminal, 
+  Search, 
+  ChevronDown,
+  Settings 
+} from "lucide-react";
 
 const navigation = [
   { label: "Overview", items: [["/", "Command Center"], ["/governance", "Governance"]] },
@@ -25,29 +46,76 @@ const navigation = [
   { label: "Review & ship", items: [["/architecture-review", "Architecture Review"], ["/security-review", "Security Review"], ["/production-readiness", "Production Readiness"], ["/release-control", "Release Control"]] },
 ] as const;
 
+function getLinkIcon(path: string) {
+  const sizeClass = "w-4 h-4 opacity-80 group-hover:opacity-100 transition-opacity";
+  switch (path) {
+    case "/": return <LayoutDashboard className={sizeClass} />;
+    case "/governance": return <Globe className={sizeClass} />;
+    case "/scenario-explorer": return <Compass className={sizeClass} />;
+    case "/tier-explorer": return <Layers className={sizeClass} />;
+    case "/recommendations": return <Sparkles className={sizeClass} />;
+    case "/playbooks": return <BookOpen className={sizeClass} />;
+    case "/ai-agent-studio": return <Cpu className={sizeClass} />;
+    case "/agent-workflow": return <Workflow className={sizeClass} />;
+    case "/executive": return <Activity className={sizeClass} />;
+    case "/engineering-intelligence": return <TrendingUp className={sizeClass} />;
+    case "/portfolio": return <PieChart className={sizeClass} />;
+    case "/spec-dependencies": return <GitBranch className={sizeClass} />;
+    case "/architecture-review": return <ShieldCheck className={sizeClass} />;
+    case "/security-review": return <Lock className={sizeClass} />;
+    case "/production-readiness": return <CheckCircle className={sizeClass} />;
+    case "/release-control": return <Terminal className={sizeClass} />;
+    default: return <Settings className={sizeClass} />;
+  }
+}
+
 export default function App() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <Link className="brand" to="/">
           <span className="brand-mark">E</span>
-          <span><strong>EEAOS</strong><small>Command Center</small></span>
+          <div className="brand-info">
+            <strong>EEAOS</strong>
+            <small>Command Center</small>
+          </div>
         </Link>
-        <div className="workspace-chip"><span className="status-dot" /> Delivery workspace <span className="chevron">⌄</span></div>
+        <div className="workspace-chip">
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <span className="status-dot" /> 
+            <span style={{ marginLeft: "4px" }}>Delivery workspace</span>
+          </div>
+          <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
+        </div>
         <nav aria-label="Primary navigation" className="sidebar-nav">
           {navigation.map((section) => <div className="nav-section" key={section.label}>
             <p className="nav-label">{section.label}</p>
-            {section.items.map(([path, label]) => <NavLink key={path} to={path} end={path === "/"} className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
-              <span className="nav-glyph" aria-hidden="true">{label.charAt(0)}</span>{label}
+            {section.items.map(([path, label]) => <NavLink key={path} to={path} end={path === "/"} className={({ isActive }) => isActive ? "nav-link active group" : "nav-link group"}>
+              <span className="nav-glyph" aria-hidden="true">{getLinkIcon(path)}</span>
+              {label}
             </NavLink>)}
           </div>)}
         </nav>
-        <div className="sidebar-footer"><span className="status-dot green" /> System healthy <span>v0.1</span></div>
+        <div className="sidebar-footer">
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <span className="status-dot green" /> 
+            <span style={{ marginLeft: "4px" }}>System healthy</span>
+          </div>
+          <span>v0.1</span>
+        </div>
       </aside>
       <div className="app-content">
         <header className="topbar">
-          <div><p className="eyebrow">Engineering operating system</p><p className="breadcrumb">Workspace / <strong>Command Center</strong></p></div>
-          <div className="topbar-actions"><button className="icon-button" type="button" aria-label="Search">⌕</button><button className="avatar" type="button" aria-label="Open profile">RK</button></div>
+          <div>
+            <p className="eyebrow">Engineering operating system</p>
+            <p className="breadcrumb">Workspace / <strong>Command Center</strong></p>
+          </div>
+          <div className="topbar-actions">
+            <button className="icon-button" type="button" aria-label="Search">
+              <Search className="w-4 h-4 text-zinc-500" />
+            </button>
+            <button className="avatar" type="button" aria-label="Open profile">RK</button>
+          </div>
         </header>
         <main className="page-content">
         <Routes>

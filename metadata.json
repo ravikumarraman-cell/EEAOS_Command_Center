@@ -1,0 +1,6 @@
+{
+  "name": "EEAOS Command Center",
+  "description": "An engineering operating system designed for governed, high-intent release management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
