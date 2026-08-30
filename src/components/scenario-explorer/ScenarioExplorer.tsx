@@ -1,28 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { 
-  Compass, 
   ArrowRight, 
   FileText, 
   User, 
-  Settings, 
   CheckCircle2, 
-  Sparkles, 
   Cpu, 
-  Workflow, 
-  Activity, 
-  AlertCircle,
   HelpCircle,
   Search,
-  BookOpen,
   ChevronRight,
   ShieldCheck,
   Briefcase,
   Play,
-  RotateCcw,
   Terminal,
   Clock,
-  Fingerprint,
-  Sliders
+  Layers,
+  Wrench,
+  Sparkles
 } from "lucide-react";
 import { specDocuments, Specification } from "../../specs/specDocuments";
 import SpecDetailDrawer from "../specs/SpecDetailDrawer";
@@ -30,123 +23,175 @@ import SpecDetailDrawer from "../specs/SpecDetailDrawer";
 interface Scenario {
   name: string;
   tiers: string;
-  agents: string[];
+  agents: {
+    role: string;
+    description: string;
+    tools: string[];
+  }[];
   specs: string[];
   outputs: string[];
   color: string;
   desc: string;
   slaHours: number;
   criticality: "High" | "Medium" | "Critical";
-  riskScore: number;
 }
 
 const scenarios: Scenario[] = [
   {
     name: "Feature Development",
-    tiers: "T0+T1+Feature Delivery",
-    agents: ["Architect", "Implementer", "QA"],
-    specs: ["Engineering Constitution", "Feature Delivery", "Testing Strategy"],
-    outputs: ["Verified Code Change", "Automated Coverage Suite", "Changelog Manifest"],
-    color: "emerald",
-    desc: "Incorporate new modular, robust functionality under standard high-intent compliance guidelines.",
+    tiers: "T0 + T1 + Feature Delivery",
+    desc: "Deploy new incremental product functions under standard QA and CI/CD gate checks.",
     slaHours: 4,
     criticality: "High",
-    riskScore: 35,
+    color: "emerald",
+    specs: ["Engineering Constitution", "Feature Delivery", "Testing Strategy"],
+    agents: [
+      {
+        role: "Lead Architect",
+        description: "Validates specifications and aligns design goals.",
+        tools: ["Spec Analyzer", "UML Generator"]
+      },
+      {
+        role: "Code Implementer",
+        description: "Generates robust code changes matching target directives.",
+        tools: ["Typescript Compiler", "Template Injector"]
+      },
+      {
+        role: "QA Verifier",
+        description: "Scans compliance coverage and evaluates code quality.",
+        tools: ["Linter", "Jest Test Runner"]
+      }
+    ],
+    outputs: ["Verified Code Change", "Automated Coverage Suite", "Changelog Manifest"]
   },
   {
     name: "Bug RCA & Incident Fix",
-    tiers: "T0+RCA",
-    agents: ["Implementer", "QA"],
-    specs: ["Bug RCA", "Testing Strategy"],
-    outputs: ["Failing Regression Test", "Targeted Hotfix Patch", "5 Whys Postmortem Document"],
-    color: "rose",
+    tiers: "T0 + RCA",
     desc: "Trace regressions, write target isolation proofs, and implement zero-regression remedies following incidents.",
     slaHours: 2,
     criticality: "Critical",
-    riskScore: 78,
+    color: "rose",
+    specs: ["Bug RCA", "Testing Strategy"],
+    agents: [
+      {
+        role: "Code Implementer",
+        description: "Creates failing regression tests and implements hotfixes.",
+        tools: ["Debugger", "Git Cherrypick"]
+      },
+      {
+        role: "QA Verifier",
+        description: "Verifies incident resolution and signs off on the 5-Whys analysis.",
+        tools: ["Regression Suite", "Postmortem Logger"]
+      }
+    ],
+    outputs: ["Failing Regression Test", "Targeted Hotfix Patch", "5 Whys Postmortem"]
   },
   {
     name: "API Service Design",
-    tiers: "T0+T1+API",
-    agents: ["Architect", "Implementer", "Security Reviewer"],
-    specs: ["API Governance", "Security Playbook"],
-    outputs: ["Validated OpenAPI Contract", "Idempotency Proof Tests", "JSON Schema Envelopes"],
-    color: "blue",
+    tiers: "T0 + T1 + API",
     desc: "Construct highly consistent, versioned, contract-first service endpoints with structured payload handlers.",
     slaHours: 8,
     criticality: "High",
-    riskScore: 42,
+    color: "blue",
+    specs: ["API Governance", "Security Playbook"],
+    agents: [
+      {
+        role: "Lead Architect",
+        description: "Designs versioned API interfaces and validates JSON structures.",
+        tools: ["OpenAPI Parser", "Schema Validator"]
+      },
+      {
+        role: "Code Implementer",
+        description: "Builds service handlers and integrates idempotency mechanisms.",
+        tools: ["Express Router", "Mock Request Tester"]
+      },
+      {
+        role: "Security Reviewer",
+        description: "Performs interface vulnerability checks and payload auditing.",
+        tools: ["OWASP Scanner", "SQL Injection Tester"]
+      }
+    ],
+    outputs: ["OpenAPI Contract", "Idempotency Proof Tests", "JSON Schema Envelopes"]
   },
   {
     name: "Database Schema Migration",
-    tiers: "T0+DB",
-    agents: ["Architect", "Implementer"],
-    specs: ["Database Governance", "Migration Playbook"],
-    outputs: ["Expand-Contract Migration Scripts", "Pre-Flight Rollback Script", "Data Integrity Parity Tests"],
-    color: "violet",
+    tiers: "T0 + DB",
     desc: "Migrate structural relational tables using live zero-downtime double-write procedures safely.",
     slaHours: 6,
     criticality: "Critical",
-    riskScore: 85,
+    color: "violet",
+    specs: ["Database Governance", "Migration Playbook"],
+    agents: [
+      {
+        role: "Lead Architect",
+        description: "Validates schema changes against strict backward compatibility rules.",
+        tools: ["Drizzle Schema Visualizer", "Dependency Checker"]
+      },
+      {
+        role: "Code Implementer",
+        description: "Writes expand-contract SQL scripts and safe migration controls.",
+        tools: ["SQL Migration Generator", "Rollback Driver"]
+      }
+    ],
+    outputs: ["Expand-Contract SQL Scripts", "Pre-Flight Rollback Script", "Data Integrity Parity Tests"]
   },
   {
     name: "Security Review Audit",
-    tiers: "T0+Security",
-    agents: ["Security Reviewer"],
-    specs: ["Security Playbook"],
-    outputs: ["Vulnerability Findings Log", "Injected Input Sanitization Proofs", "Signed Cryptographic Audit Token"],
-    color: "indigo",
+    tiers: "T0 + Security",
     desc: "Perform extensive static analysis scans and OWASP threat modeling prior to code promotion.",
     slaHours: 3,
     criticality: "Critical",
-    riskScore: 92,
+    color: "indigo",
+    specs: ["Security Playbook"],
+    agents: [
+      {
+        role: "Security Reviewer",
+        description: "Audits target entrypoints, scans secrets, and mitigates OWASP vulnerabilities.",
+        tools: ["Static Security Scanner", "Secret Leak Detector", "Container Vulnerability Tool"]
+      }
+    ],
+    outputs: ["Vulnerability Findings Log", "Input Sanitization Proofs", "Signed Cryptographic Audit Token"]
   },
   {
     name: "Performance Tune & Caching",
-    tiers: "T0+Performance",
-    agents: ["Performance Reviewer"],
-    specs: ["Performance Handbook"],
-    outputs: ["Synthetic Latency Benchmark", "Edge Cache Control Maps", "Dynamic Code-Splitting Audit"],
-    color: "amber",
+    tiers: "T0 + Performance",
     desc: "Verify bundle footprints, optimize First Contentful Paint times, and configure cache levels.",
     slaHours: 4,
     criticality: "Medium",
-    riskScore: 28,
+    color: "amber",
+    specs: ["Performance Handbook"],
+    agents: [
+      {
+        role: "Performance Reviewer",
+        description: "Measures latency benchmarks, bundle splits, and edge caching configurations.",
+        tools: ["Synthetic Benchmark Simulator", "Lighthouse Auditor", "Cache Control mapper"]
+      }
+    ],
+    outputs: ["Synthetic Latency Benchmark", "Edge Cache Control Maps", "Dynamic Code-Splitting Audit"]
   },
   {
     name: "Production Release Gate",
-    tiers: "T0+Release",
-    agents: ["Release Approver"],
-    specs: ["Production Readiness"],
-    outputs: ["Active Container Diagnostic Log", "Disaster Recovery Rollback Signoff", "Live Production Verification Token"],
-    color: "red",
+    tiers: "T0 + Release",
     desc: "Final checkpoint evaluating diagnostic probes, structured logs, and structural signoffs.",
     slaHours: 1,
     criticality: "Critical",
-    riskScore: 95,
-  },
+    color: "red",
+    specs: ["Production Readiness"],
+    agents: [
+      {
+        role: "Release Approver",
+        description: "Executes pre-flight live checks, analyzes telemetry, and issues Go/No-Go tokens.",
+        tools: ["Live Probe Evaluator", "Log Analyzer", "Release Approval Gate"]
+      }
+    ],
+    outputs: ["Container Diagnostic Log", "Disaster Recovery Rollback Signoff", "Live Production Verification Token"]
+  }
 ];
 
 export default function ScenarioExplorer() {
   const [selected, setSelected] = useState<Scenario>(scenarios[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpec, setSelectedSpec] = useState<Specification | null>(null);
-
-  // Simulation Playground State
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [simStep, setSimStep] = useState(0); // 0: Idle, 1: Architect, 2: Implementer, 3: QA/Security, 4: Done
-  const [simLogs, setSimLogs] = useState<string[]>([]);
-  
-  // Custom interactive parameters
-  const [strictMode, setStrictMode] = useState(true);
-  const [forceFailUnitTests, setForceFailUnitTests] = useState(false);
-
-  // Reset simulation when scenario changes
-  useEffect(() => {
-    setIsSimulating(false);
-    setSimStep(0);
-    setSimLogs([]);
-  }, [selected]);
 
   const filteredScenarios = scenarios.filter((s) =>
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -170,266 +215,110 @@ export default function ScenarioExplorer() {
     }
   };
 
-  // Run visual simulator step loop
-  const handleStartSimulation = () => {
-    setIsSimulating(true);
-    setSimStep(1);
-    setSimLogs([`[09:00:00] INITIALIZING pipeline: "${selected.name}"`, `[09:00:01] Strict Compliance Mode is: ${strictMode ? "ENABLED (100% Gate requirement)" : "DISABLED (Relaxed warnings)"}`]);
-    
-    // Step 1: Architect
-    setTimeout(() => {
-      setSimStep(2);
-      setSimLogs(prev => [
-        ...prev,
-        `[09:00:03] ARCHITECT agent online: Fetching EEAOS standards.`,
-        `[09:00:04] Checked Playbooks: ${selected.specs.join(", ")}`,
-        `[09:00:05] Architecture blueprint approved. Handing off to implementer.`
-      ]);
-    }, 1800);
-
-    // Step 2: Implementer
-    setTimeout(() => {
-      setSimStep(3);
-      setSimLogs(prev => [
-        ...prev,
-        `[09:00:08] IMPLEMENTER agent online: Applying structural templates.`,
-        `[09:00:09] Injecting machine-directives directly into workspace.`,
-        `[09:00:10] Code generation completed successfully. Preparing QA and regression validation checks.`
-      ]);
-    }, 3600);
-
-    // Step 3: Verification (QA / Security)
-    setTimeout(() => {
-      if (forceFailUnitTests) {
-        setSimStep(4);
-        setSimLogs(prev => [
-          ...prev,
-          `[09:00:12] SYSTEM FAILURE: Coverage evaluation failed!`,
-          `[09:00:13] ERROR: Coverage fell below 85% statement threshold.`,
-          `[09:00:14] WORKFLOW REJECTED: Compliance standards not met.`
-        ]);
-        setIsSimulating(false);
-      } else {
-        setSimStep(4);
-        setSimLogs(prev => [
-          ...prev,
-          `[09:00:12] VERIFIER agent online: Scanning compliance criteria...`,
-          `[09:00:13] Audit matches all machine criteria specifications.`,
-          `[09:00:14] Artifacts verified: ${selected.outputs.join(", ")}`,
-          `[09:00:15] WORKFLOW SUCCESS: Spec compliant. Ready for production promotion.`
-        ]);
-        setIsSimulating(false);
-      }
-    }, 5400);
-  };
-
-  const resetSimulation = () => {
-    setIsSimulating(false);
-    setSimStep(0);
-    setSimLogs([]);
-  };
-
   const getCriticalityBadge = (level: string) => {
     switch (level) {
-      case "Critical": return "bg-red-50 text-red-700 border-red-200/60";
+      case "Critical": return "bg-rose-50 text-rose-700 border-rose-200/60";
       case "High": return "bg-amber-50 text-amber-700 border-amber-200/60";
       default: return "bg-blue-50 text-blue-700 border-blue-200/60";
-    }
-  };
-
-  const getAccentColor = (color: string) => {
-    switch (color) {
-      case "emerald": return "text-emerald-500 bg-emerald-50 border-emerald-200";
-      case "rose": return "text-rose-500 bg-rose-50 border-rose-200";
-      case "blue": return "text-blue-500 bg-blue-50 border-blue-200";
-      case "violet": return "text-[#8b5cf6] bg-[#8b5cf6]/5 border-[#8b5cf6]/10";
-      case "indigo": return "text-indigo-500 bg-indigo-50 border-indigo-200";
-      case "amber": return "text-amber-500 bg-amber-50 border-amber-200";
-      case "red": return "text-red-500 bg-red-50 border-red-200";
-      default: return "text-zinc-500 bg-zinc-50 border-zinc-200";
     }
   };
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
       
-      {/* Title Header: World-Class Premium Serif Pairing */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b border-zinc-200/60 pb-6">
-        <div>
-          <p className="eyebrow accent" style={{ fontWeight: 800, fontSize: "11px", letterSpacing: "0.14em" }}>
-            Autonomous Life-Cycle Modeling
-          </p>
-          <h1 className="font-serif text-4xl md:text-5xl font-normal text-zinc-950 mt-1 tracking-tight">
-            Scenario Workspace
-          </h1>
-          <p className="text-zinc-500 text-sm mt-2 max-w-2xl leading-relaxed">
-            Trace the operational blueprint of engineering flows. Simulate agent pipelines, evaluate risks, and audit compliance gates interactively.
-          </p>
-        </div>
-
-        {/* Dynamic State Overview Badge */}
-        <div className="flex items-center gap-3 bg-white border border-zinc-200 p-3 rounded-2xl shadow-xs self-start md:self-auto">
-          <Activity className="w-4 h-4 text-[#d94625] animate-pulse" />
-          <div className="text-left">
-            <span className="block text-[9px] font-bold text-zinc-400 uppercase tracking-widest">Active Simulator State</span>
-            <span className="block text-xs font-bold text-zinc-800">
-              {isSimulating ? `Running Step ${simStep}/3` : simStep === 4 ? "Simulation Complete" : "Ready to Simulate"}
-            </span>
-          </div>
-        </div>
+      {/* Visual Title Header */}
+      <div className="border-b border-zinc-200/60 pb-6">
+        <p className="eyebrow accent" style={{ fontWeight: 800, fontSize: "11px", letterSpacing: "0.14em" }}>
+          AI Agent Studio
+        </p>
+        <h1 className="font-serif text-4xl md:text-5xl font-normal text-zinc-950 mt-1 tracking-tight">
+          Scenario Explorer
+        </h1>
+        <p className="text-zinc-500 text-sm mt-2 max-w-2xl leading-relaxed">
+          Select an engineering scenario to see the governing playbooks, assigned autonomous agents, and expected deliverables mapped out like an AI Agent Studio workspace.
+        </p>
       </div>
 
-      {/* Main Structural Layout: Master List-Detail Bento Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* LEFT COLUMN: List & Search with active parameters */}
-        <div className="lg:col-span-4 space-y-6">
-          
-          {/* Filter Container */}
-          <div className="space-y-3 bg-white border border-zinc-200 rounded-2xl p-4 shadow-xs">
-            <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider px-1 block">
-              Search & Filters
-            </span>
-            <div className="relative">
-              <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-zinc-400" />
-              <input
-                type="text"
-                placeholder="Filter scenarios, playbooks..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 bg-zinc-50 hover:bg-zinc-100/50 border border-zinc-200 rounded-xl text-sm placeholder-zinc-400 focus:outline-hidden focus:ring-2 focus:ring-[#d94625]/15 focus:border-[#d94625] transition-all"
-              />
-            </div>
+        {/* Left Column: Minimalist Scenario Selector (AI Agent Studio Style) */}
+        <div className="lg:col-span-4 space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="Search engineering scenarios..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 bg-white border border-zinc-200 rounded-xl text-sm placeholder-zinc-400 focus:outline-hidden focus:ring-2 focus:ring-[#d94625]/20 focus:border-[#d94625] transition-all"
+            />
           </div>
 
-          {/* Scenario Cards List */}
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {filteredScenarios.map((s) => {
               const isSelected = selected.name === s.name;
               return (
                 <button
                   key={s.name}
                   onClick={() => setSelected(s)}
-                  className={`w-full text-left p-4 rounded-2xl border transition-all duration-300 flex items-center justify-between group relative overflow-hidden ${
+                  className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
                     isSelected
-                      ? "bg-zinc-950 border-transparent text-white shadow-lg shadow-zinc-950/15"
-                      : "bg-white border-zinc-200 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/50"
+                      ? "bg-zinc-900 border-transparent text-white shadow-md shadow-zinc-900/10"
+                      : "bg-white border-zinc-200/80 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50/50"
                   }`}
                 >
-                  {/* Subtle color highlight ribbon */}
                   {isSelected && (
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#d94625]" />
                   )}
-
-                  <div className="pr-4 space-y-1.5">
-                    <strong className="block text-sm font-bold tracking-tight">{s.name}</strong>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className={`inline-block text-[9px] px-2 py-0.5 rounded-md border font-mono font-bold ${
-                        isSelected 
-                          ? "bg-zinc-800 text-zinc-300 border-zinc-700" 
-                          : "bg-zinc-50 text-zinc-500 border-zinc-200"
-                      }`}>
-                        {s.tiers}
-                      </span>
-                      <span className={`text-[9px] font-semibold ${isSelected ? "text-zinc-400" : "text-zinc-500"}`}>
-                        Risk: {s.riskScore}%
-                      </span>
-                    </div>
+                  
+                  <div className="pr-4 space-y-1">
+                    <strong className="block text-xs font-bold tracking-tight uppercase tracking-wider">{s.name}</strong>
+                    <span className={`inline-block text-[9px] px-2 py-0.5 rounded-sm border font-mono font-medium ${
+                      isSelected 
+                        ? "bg-zinc-800 text-zinc-300 border-zinc-700" 
+                        : "bg-zinc-100 text-zinc-500 border-zinc-200"
+                    }`}>
+                      {s.tiers}
+                    </span>
                   </div>
 
-                  <div className={`p-2 rounded-xl transition-all ${
-                    isSelected ? "bg-zinc-800 text-[#d94625]" : "bg-zinc-50 text-zinc-400 group-hover:text-zinc-800 group-hover:bg-zinc-100"
-                  }`}>
-                    <ChevronRight className="w-4 h-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5" />
-                  </div>
+                  <ArrowRight 
+                    className={`w-4 h-4 shrink-0 transition-all duration-300 ${
+                      isSelected 
+                        ? "text-[#d94625] translate-x-0" 
+                        : "text-zinc-300 group-hover:text-zinc-500 group-hover:translate-x-1"
+                    }`} 
+                  />
                 </button>
               );
             })}
-
+            
             {filteredScenarios.length === 0 && (
-              <div className="p-8 text-center bg-white border border-dashed border-zinc-200 rounded-3xl">
+              <div className="p-8 text-center bg-white border border-dashed border-zinc-200 rounded-2xl">
                 <HelpCircle className="w-8 h-8 text-zinc-300 mx-auto mb-2" />
-                <p className="text-zinc-500 text-xs font-semibold">No scenarios found.</p>
+                <p className="text-zinc-500 text-xs font-semibold">No matching scenarios found.</p>
               </div>
             )}
           </div>
-
-          {/* Interactive Parameters Controls Panel (Zero Cognitive Load setup) */}
-          <div className="bg-white border border-zinc-200 rounded-3xl p-5 shadow-xs space-y-4">
-            <div className="flex items-center gap-2 border-b border-zinc-100 pb-3">
-              <Sliders className="w-4 h-4 text-zinc-500" />
-              <h4 className="text-xs font-bold text-zinc-800 uppercase tracking-wider">
-                Simulation Parameters
-              </h4>
-            </div>
-
-            <div className="space-y-3.5">
-              {/* Parameter 1 */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="block text-xs font-bold text-zinc-800">Strict Compliance Mode</span>
-                  <span className="block text-[10px] text-zinc-400">Enforces standard 100% checks</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setStrictMode(!strictMode)}
-                  className={`w-10 h-6 rounded-full transition-colors relative ${
-                    strictMode ? "bg-[#d94625]" : "bg-zinc-200"
-                  }`}
-                >
-                  <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                    strictMode ? "translate-x-4" : ""
-                  }`} />
-                </button>
-              </div>
-
-              {/* Parameter 2 */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="block text-xs font-bold text-zinc-800">Simulate QA Failure</span>
-                  <span className="block text-[10px] text-zinc-400">Simulates failed unit tests</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setForceFailUnitTests(!forceFailUnitTests)}
-                  className={`w-10 h-6 rounded-full transition-colors relative ${
-                    forceFailUnitTests ? "bg-red-500" : "bg-zinc-200"
-                  }`}
-                >
-                  <span className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                    forceFailUnitTests ? "translate-x-4" : ""
-                  }`} />
-                </button>
-              </div>
-            </div>
-          </div>
-
         </div>
 
-        {/* RIGHT COLUMN: Interactive Simulator Details Workspace */}
+        {/* Right Column: AI Agent Studio Workspace View */}
         <div className="lg:col-span-8 space-y-6">
           
-          {/* Main Workspace Frame */}
-          <div className="bg-white border border-zinc-200 rounded-3xl p-6 md:p-8 shadow-xs space-y-8 relative overflow-hidden">
+          {/* Main Visual Profile */}
+          <div className="bg-white border border-zinc-200 rounded-2xl p-6 md:p-8 shadow-xs space-y-8">
             
-            {/* Upper Decorative Dot Matrix */}
-            <div className="absolute right-6 top-6 flex gap-1 opacity-20">
-              <span className="w-1.5 h-1.5 bg-[#d94625] rounded-full" />
-              <span className="w-1.5 h-1.5 bg-[#d94625] rounded-full" />
-              <span className="w-1.5 h-1.5 bg-[#d94625] rounded-full" />
-            </div>
-
-            {/* Title / Objective Block */}
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-zinc-100 pb-5">
-              <div className="space-y-1">
+            {/* Header Block */}
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b border-zinc-100 pb-5">
+              <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className={`inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-md border ${getCriticalityBadge(selected.criticality)}`}>
-                    {selected.criticality} Level
+                  <span className={`inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-sm border ${getCriticalityBadge(selected.criticality)}`}>
+                    {selected.criticality} Priority
                   </span>
                   <span className="text-zinc-300">•</span>
-                  <span className="text-xs text-zinc-500 font-mono">SLA Code: {selected.slaHours} Hours</span>
+                  <span className="text-xs text-zinc-500 font-mono">SLA: {selected.slaHours} Hours</span>
                 </div>
-                <h2 className="font-serif text-2xl md:text-3xl font-normal text-zinc-950 mt-1">
+                <h2 className="font-serif text-2xl md:text-3xl font-normal text-zinc-950">
                   {selected.name}
                 </h2>
                 <p className="text-xs sm:text-sm text-zinc-500 leading-relaxed max-w-xl">
@@ -437,199 +326,23 @@ export default function ScenarioExplorer() {
                 </p>
               </div>
 
-              {/* Score Metric Card */}
-              <div className="bg-zinc-50 border border-zinc-200/50 rounded-2xl p-4 text-center shrink-0 w-32 shadow-inner">
-                <span className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Risk Index</span>
-                <span className="block text-2xl font-bold font-mono text-zinc-900 mt-0.5">
-                  {selected.riskScore}%
-                </span>
-                <span className="block text-[9px] text-zinc-500 font-semibold mt-1">
-                  {selected.riskScore > 70 ? "High Rigor" : "Standard Control"}
-                </span>
+              <div className="flex items-center gap-1.5 bg-zinc-50 border border-zinc-200/60 rounded-xl px-4 py-2 text-xs text-zinc-500 font-mono self-start sm:self-auto shrink-0">
+                <span className="text-zinc-400">Tiers:</span>
+                <span className="font-bold text-zinc-800">{selected.tiers}</span>
               </div>
             </div>
 
-            {/* PIPELINE STAGE CONNECTION MAP (Interactive Node Diagram) */}
-            <div className="space-y-4">
-              <h4 className="text-xs font-bold text-zinc-800 uppercase tracking-wider px-1">
-                Connected Workspace Pipeline Nodes
-              </h4>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch relative">
-                
-                {/* Horizontal flow connectors (Hidden on mobile) */}
-                <div className="hidden md:block absolute top-12 left-[28%] w-[15%] h-0.5 border-t border-dashed border-zinc-300 z-0" />
-                <div className="hidden md:block absolute top-12 left-[62%] w-[15%] h-0.5 border-t border-dashed border-zinc-300 z-0" />
-
-                {/* Node 1: Architect */}
-                <div className={`border rounded-2xl p-5 transition-all duration-300 relative z-10 flex flex-col justify-between ${
-                  simStep >= 1 ? "bg-zinc-900 border-zinc-800 text-white shadow-md" : "bg-white border-zinc-200 text-zinc-700"
-                }`}>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#d94625]">
-                        Phase 01
-                      </span>
-                      {simStep > 1 ? (
-                        <CheckCircle2 className="w-4 h-4 text-[#d94625]" />
-                      ) : simStep === 1 ? (
-                        <span className="flex h-2 w-2 relative">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d94625] opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#d94625]"></span>
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="space-y-1">
-                      <h5 className="text-sm font-bold tracking-tight">System Architecture</h5>
-                      <p className={`text-[11px] leading-relaxed ${simStep >= 1 ? "text-zinc-400" : "text-zinc-500"}`}>
-                        Validates design against EEAOS rules before writing any code.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-dashed border-zinc-200/10 flex items-center gap-1.5 text-[10px] font-mono">
-                    <User className="w-3 h-3 text-[#d94625]" />
-                    <span>Architect Agent</span>
-                  </div>
-                </div>
-
-                {/* Node 2: Implementer */}
-                <div className={`border rounded-2xl p-5 transition-all duration-300 relative z-10 flex flex-col justify-between ${
-                  simStep >= 2 ? "bg-zinc-900 border-zinc-800 text-white shadow-md" : "bg-white border-zinc-200 text-zinc-700"
-                }`}>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-500">
-                        Phase 02
-                      </span>
-                      {simStep > 2 ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                      ) : simStep === 2 ? (
-                        <span className="flex h-2 w-2 relative">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="space-y-1">
-                      <h5 className="text-sm font-bold tracking-tight">Engineering Run</h5>
-                      <p className={`text-[11px] leading-relaxed ${simStep >= 2 ? "text-zinc-400" : "text-zinc-500"}`}>
-                        Decomposes and generates compliant functional pull requests.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-dashed border-zinc-200/10 flex items-center gap-1.5 text-[10px] font-mono">
-                    <User className="w-3 h-3 text-emerald-500" />
-                    <span>Implementer Agent</span>
-                  </div>
-                </div>
-
-                {/* Node 3: QA / Verification */}
-                <div className={`border rounded-2xl p-5 transition-all duration-300 relative z-10 flex flex-col justify-between ${
-                  simStep >= 3 ? "bg-zinc-900 border-zinc-800 text-white shadow-md" : "bg-white border-zinc-200 text-zinc-700"
-                }`}>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-blue-500">
-                        Phase 03
-                      </span>
-                      {simStep > 3 ? (
-                        <CheckCircle2 className={`w-4 h-4 ${forceFailUnitTests ? "text-red-500" : "text-blue-500"}`} />
-                      ) : simStep === 3 ? (
-                        <span className="flex h-2 w-2 relative">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="space-y-1">
-                      <h5 className="text-sm font-bold tracking-tight">Audit & Verification</h5>
-                      <p className={`text-[11px] leading-relaxed ${simStep >= 3 ? "text-zinc-400" : "text-zinc-500"}`}>
-                        Enforces regression tests and strict security checklist controls.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-3 border-t border-dashed border-zinc-200/10 flex items-center gap-1.5 text-[10px] font-mono">
-                    <User className="w-3 h-3 text-blue-500" />
-                    <span>QA / Security Agents</span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-            {/* INTERACTIVE SIMULATOR ACTION BAR */}
-            <div className="bg-[#faf9f8] border border-zinc-200 p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="space-y-1">
-                <span className="text-xs font-bold text-zinc-800 block">Interactive Pipeline Engine</span>
-                <p className="text-[11px] text-zinc-500 leading-relaxed">
-                  Initiate a dry-run simulator session of the EEAOS engine matching your parameter selection.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2.5 self-end sm:self-auto">
-                {simStep > 0 && (
-                  <button
-                    type="button"
-                    onClick={resetSimulation}
-                    className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-100 text-xs font-bold text-zinc-700 transition-colors"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    Reset
-                  </button>
-                )}
-                
-                <button
-                  type="button"
-                  onClick={handleStartSimulation}
-                  disabled={isSimulating}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-950 hover:bg-zinc-900 disabled:opacity-50 text-white text-xs font-bold transition-all shadow-md active:scale-95"
-                >
-                  <Play className="w-3.5 h-3.5 fill-white text-white" />
-                  {isSimulating ? "Simulating..." : simStep > 0 ? "Simulate Again" : "Run Simulator"}
-                </button>
-              </div>
-            </div>
-
-            {/* LIVE SIMULATOR CONSOLE/TERMINAL (High Appeal Visual Feature) */}
-            {simLogs.length > 0 && (
-              <div className="bg-zinc-950 border border-zinc-800 rounded-2xl overflow-hidden shadow-xl animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <div className="flex items-center justify-between px-5 py-3 bg-zinc-900 border-b border-zinc-800">
-                  <div className="flex items-center gap-2 text-[#d94625]">
-                    <Terminal className="w-4 h-4" />
-                    <span className="font-mono text-[10px] font-bold tracking-wider uppercase text-zinc-300">
-                      Telemetry_Live_Console.log
-                    </span>
-                  </div>
-                  <span className="flex h-2 w-2 relative shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                </div>
-                <div className="p-5 font-mono text-xs space-y-2 max-h-52 overflow-y-auto leading-relaxed">
-                  {simLogs.map((log, index) => {
-                    const isErr = log.includes("FAILURE") || log.includes("ERROR") || log.includes("REJECTED");
-                    const isSucc = log.includes("SUCCESS") || log.includes("approved") || log.includes("compliant");
-                    return (
-                      <div 
-                        key={index} 
-                        className={`font-mono text-left ${isErr ? "text-rose-400" : isSucc ? "text-emerald-400" : "text-zinc-300"}`}
-                      >
-                        {log}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* PLAYBOOKS & GATES (Clickable to open spec drawers) */}
-            <div className="space-y-4 pt-2 border-t border-zinc-100">
+            {/* SECTION 1: Governing Compliance Playbooks */}
+            <div className="space-y-3">
               <div className="flex items-center gap-2 text-zinc-800">
                 <FileText className="w-4 h-4 text-[#d94625]" />
                 <h4 className="text-xs font-bold uppercase tracking-wider">
-                  Associated Engineering Specifications (Linked)
+                  Governing Compliance Playbooks
                 </h4>
               </div>
+              <p className="text-xs text-zinc-400">
+                These playbooks are linked to this scenario. Click a standard to audit its criteria and interactive checklists:
+              </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {selected.specs.map((specName) => {
@@ -644,7 +357,7 @@ export default function ScenarioExplorer() {
                       key={specName}
                       type="button"
                       onClick={() => openSpecByName(specName)}
-                      className="group flex items-start gap-4 p-4 text-left border border-zinc-200/80 hover:border-[#d94625] rounded-xl hover:bg-zinc-50 bg-white transition-all hover:shadow-xs"
+                      className="group flex items-start gap-4 p-4 text-left border border-zinc-200/80 hover:border-[#d94625] rounded-xl hover:bg-zinc-50 bg-white transition-all"
                     >
                       <div className="w-8 h-8 rounded-lg bg-[#d94625]/5 text-[#d94625] flex items-center justify-center font-serif text-sm font-bold group-hover:bg-[#d94625] group-hover:text-white transition-all">
                         {specObj ? specObj.tier : "T1"}
@@ -654,28 +367,67 @@ export default function ScenarioExplorer() {
                           {specName}
                         </span>
                         <span className="block text-[10px] text-zinc-400 font-mono mt-0.5">
-                          {specObj ? specObj.id : "EEAOS-SPEC-XXX"} • Click to View
+                          {specObj ? specObj.id : "EEAOS-SPEC-XXX"} • Click to Open
                         </span>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-[#d94625] group-hover:translate-x-1 transition-all self-center shrink-0" />
+                      <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-[#d94625] group-hover:translate-x-1 transition-all self-center" />
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* MANDATED EVIDENCE OUTPUT PACKAGE */}
+            {/* SECTION 2: AI Agent Studio Team Roster */}
             <div className="space-y-4 pt-2 border-t border-zinc-100">
               <div className="flex items-center gap-2 text-zinc-800">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                <Cpu className="w-4 h-4 text-[#d94625]" />
                 <h4 className="text-xs font-bold uppercase tracking-wider">
-                  Expected Deliverables & Artifact Package
+                  Assigned Autonomous AI Agents
+                </h4>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {selected.agents.map((agent) => (
+                  <div key={agent.role} className="border border-zinc-200 bg-[#fcfcfc] rounded-xl p-4 flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-lg bg-zinc-900 text-white flex items-center justify-center">
+                          <User className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">{agent.role}</span>
+                      </div>
+                      <p className="text-[11px] text-zinc-500 leading-relaxed">
+                        {agent.description}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5 pt-2.5 border-t border-zinc-100">
+                      <span className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Assigned Tools:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {agent.tools.map((t) => (
+                          <span key={t} className="text-[9px] font-mono font-medium text-zinc-600 bg-zinc-100 px-1.5 py-0.5 rounded-sm">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* SECTION 3: Mandated Evidence Artifacts */}
+            <div className="space-y-4 pt-2 border-t border-zinc-100">
+              <div className="flex items-center gap-2 text-zinc-800">
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <h4 className="text-xs font-bold uppercase tracking-wider">
+                  Mandated Deliverables & Output Packages
                 </h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {selected.outputs.map((output) => (
-                  <div key={output} className="flex items-center gap-3 p-4 border border-emerald-100 bg-emerald-50/10 rounded-2xl hover:border-emerald-200 transition-colors">
-                    <ShieldCheck className="w-4.5 h-4.5 text-emerald-500 shrink-0" />
+                  <div key={output} className="flex items-center gap-3 p-4 border border-emerald-100 bg-emerald-50/10 rounded-xl hover:border-emerald-200 transition-colors">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                     <span className="text-xs font-semibold text-zinc-800 leading-tight">{output}</span>
                   </div>
                 ))}
@@ -687,7 +439,7 @@ export default function ScenarioExplorer() {
 
       </div>
 
-      {/* Comprehensive Dual-View Drawer */}
+      {/* Comprehensive Dual-View Spec Drawer */}
       <SpecDetailDrawer
         spec={selectedSpec}
         onClose={() => setSelectedSpec(null)}
