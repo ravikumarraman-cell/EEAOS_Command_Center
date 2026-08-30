@@ -332,106 +332,116 @@ export default function ScenarioExplorer() {
               </div>
             </div>
 
-            {/* SECTION 1: Governing Compliance Playbooks */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-zinc-800">
-                <FileText className="w-4 h-4 text-[#d94625]" />
-                <h4 className="text-xs font-bold uppercase tracking-wider">
-                  Governing Compliance Playbooks
-                </h4>
-              </div>
-              <p className="text-xs text-zinc-400">
-                These playbooks are linked to this scenario. Click a standard to audit its criteria and interactive checklists:
-              </p>
+            {/* Two-Column Workspace Layout (AI Agent Studio Style) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-zinc-100">
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {selected.specs.map((specName) => {
-                  const specObj = specDocuments.find(
-                    (doc) => doc.title.toLowerCase() === specName.toLowerCase() ||
-                    doc.title.toLowerCase().includes(specName.toLowerCase()) ||
-                    specName.toLowerCase().includes(doc.title.toLowerCase())
-                  );
-                  
-                  return (
-                    <button
-                      key={specName}
-                      type="button"
-                      onClick={() => openSpecByName(specName)}
-                      className="group flex items-start gap-4 p-4 text-left border border-zinc-200/80 hover:border-[#d94625] rounded-xl hover:bg-zinc-50 bg-white transition-all"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-[#d94625]/5 text-[#d94625] flex items-center justify-center font-serif text-sm font-bold group-hover:bg-[#d94625] group-hover:text-white transition-all">
-                        {specObj ? specObj.tier : "T1"}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <span className="block text-xs font-bold text-zinc-900 group-hover:text-[#d94625] transition-colors truncate">
-                          {specName}
-                        </span>
-                        <span className="block text-[10px] text-zinc-400 font-mono mt-0.5">
-                          {specObj ? specObj.id : "EEAOS-SPEC-XXX"} • Click to Open
-                        </span>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-[#d94625] group-hover:translate-x-1 transition-all self-center" />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* SECTION 2: AI Agent Studio Team Roster */}
-            <div className="space-y-4 pt-2 border-t border-zinc-100">
-              <div className="flex items-center gap-2 text-zinc-800">
-                <Cpu className="w-4 h-4 text-[#d94625]" />
-                <h4 className="text-xs font-bold uppercase tracking-wider">
-                  Assigned Autonomous AI Agents
-                </h4>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {selected.agents.map((agent) => (
-                  <div key={agent.role} className="border border-zinc-200 bg-[#fcfcfc] rounded-xl p-4 flex flex-col justify-between space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-zinc-900 text-white flex items-center justify-center">
-                          <User className="w-3.5 h-3.5" />
+              {/* Column 1: AI Agent Roster */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-zinc-800 pb-1">
+                  <Cpu className="w-4 h-4 text-[#d94625]" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider">
+                    Assigned Autonomous AI Agents
+                  </h4>
+                </div>
+                
+                <div className="space-y-4">
+                  {selected.agents.map((agent) => (
+                    <div key={agent.role} className="border border-zinc-200 bg-[#fcfcfc] rounded-xl p-4 flex flex-col justify-between space-y-4 hover:border-zinc-300 transition-colors">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-lg bg-zinc-900 text-white flex items-center justify-center">
+                            <User className="w-3.5 h-3.5" />
+                          </div>
+                          <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">{agent.role}</span>
                         </div>
-                        <span className="text-xs font-bold text-zinc-950 uppercase tracking-tight">{agent.role}</span>
+                        <p className="text-[11px] text-zinc-500 leading-relaxed">
+                          {agent.description}
+                        </p>
                       </div>
-                      <p className="text-[11px] text-zinc-500 leading-relaxed">
-                        {agent.description}
-                      </p>
-                    </div>
 
-                    <div className="space-y-1.5 pt-2.5 border-t border-zinc-100">
-                      <span className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Assigned Tools:</span>
-                      <div className="flex flex-wrap gap-1">
-                        {agent.tools.map((t) => (
-                          <span key={t} className="text-[9px] font-mono font-medium text-zinc-600 bg-zinc-100 px-1.5 py-0.5 rounded-sm">
-                            {t}
-                          </span>
-                        ))}
+                      <div className="space-y-1.5 pt-2.5 border-t border-zinc-100">
+                        <span className="block text-[9px] font-bold text-zinc-400 uppercase tracking-wider">Assigned Tools:</span>
+                        <div className="flex flex-wrap gap-1">
+                          {agent.tools.map((t) => (
+                            <span key={t} className="text-[9px] font-mono font-medium text-zinc-600 bg-zinc-100 px-1.5 py-0.5 rounded-sm">
+                              {t}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* SECTION 3: Mandated Evidence Artifacts */}
-            <div className="space-y-4 pt-2 border-t border-zinc-100">
-              <div className="flex items-center gap-2 text-zinc-800">
-                <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <h4 className="text-xs font-bold uppercase tracking-wider">
-                  Mandated Deliverables & Output Packages
-                </h4>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {selected.outputs.map((output) => (
-                  <div key={output} className="flex items-center gap-3 p-4 border border-emerald-100 bg-emerald-50/10 rounded-xl hover:border-emerald-200 transition-colors">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span className="text-xs font-semibold text-zinc-800 leading-tight">{output}</span>
+              {/* Column 2: Governing Playbooks & Mandated Deliverables */}
+              <div className="space-y-6">
+                
+                {/* Governing Playbooks */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-zinc-800">
+                    <FileText className="w-4 h-4 text-[#d94625]" />
+                    <h4 className="text-xs font-bold uppercase tracking-wider">
+                      Governing Playbooks
+                    </h4>
                   </div>
-                ))}
+                  <p className="text-xs text-zinc-400 leading-normal">
+                    Standards linked to this scenario. Click to open and audit:
+                  </p>
+                  
+                  <div className="space-y-2.5">
+                    {selected.specs.map((specName) => {
+                      const specObj = specDocuments.find(
+                        (doc) => doc.title.toLowerCase() === specName.toLowerCase() ||
+                        doc.title.toLowerCase().includes(specName.toLowerCase()) ||
+                        specName.toLowerCase().includes(doc.title.toLowerCase())
+                      );
+                      
+                      return (
+                        <button
+                          key={specName}
+                          type="button"
+                          onClick={() => openSpecByName(specName)}
+                          className="group w-full flex items-start gap-3 p-3.5 text-left border border-zinc-200/80 hover:border-[#d94625] rounded-xl hover:bg-zinc-50 bg-white transition-all"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-[#d94625]/5 text-[#d94625] flex items-center justify-center font-serif text-xs font-bold group-hover:bg-[#d94625] group-hover:text-white transition-all shrink-0">
+                            {specObj ? specObj.tier : "T1"}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="block text-xs font-bold text-zinc-900 group-hover:text-[#d94625] transition-colors truncate">
+                              {specName}
+                            </span>
+                            <span className="block text-[9px] text-zinc-400 font-mono mt-0.5">
+                              {specObj ? specObj.id : "EEAOS-SPEC-XXX"}
+                            </span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-zinc-300 group-hover:text-[#d94625] group-hover:translate-x-1 transition-all self-center shrink-0" />
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Mandated Deliverables */}
+                <div className="space-y-3 pt-5 border-t border-zinc-100">
+                  <div className="flex items-center gap-2 text-zinc-800">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    <h4 className="text-xs font-bold uppercase tracking-wider">
+                      Mandated Deliverables
+                    </h4>
+                  </div>
+                  <div className="space-y-2">
+                    {selected.outputs.map((output) => (
+                      <div key={output} className="flex items-center gap-3 p-3.5 border border-emerald-100 bg-emerald-50/10 rounded-xl hover:border-emerald-200 transition-colors">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                        <span className="text-xs font-semibold text-zinc-800 leading-tight">{output}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
               </div>
+
             </div>
 
           </div>
